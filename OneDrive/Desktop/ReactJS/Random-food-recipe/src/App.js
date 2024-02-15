@@ -1,6 +1,15 @@
-import { Button } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  Chip,
+  List,
+  ListItem,
+  ListItemSuffix,
+  Typography,
+} from "@material-tailwind/react";
 import useAxios from "./useAxios";
 import { useEffect } from "react";
+import Skeleton from "./Skeleton";
 function App() {
   const { fetchData, loading, res } = useAxios();
   const { strInstructions, strMeal, strMealThumb, strYoutube } = res;
@@ -12,7 +21,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Skeleton />;
   }
 
   let ingredients = [];
@@ -26,34 +35,54 @@ function App() {
   });
 
   const ingList = (item, idx) => (
-    <div className="flex text-sm" key={idx}>
-      <li>{item.ingredient} - </li>
-      <span className="italic text-gray-500">{item.measure} </span>
-    </div>
+    <List key={idx}>
+      <ListItem>
+        {item.ingredient}
+        <ListItemSuffix>
+          <Chip
+            value={item.measure}
+            variant="ghost"
+            size="sm"
+            className="rounded-full"
+          />
+        </ListItemSuffix>
+      </ListItem>
+    </List>
   );
 
   return (
-    <>
-      <div className="text-center">
+    <div className="h-full mx-36">
+      <div className="flex items-center justify-center mt-6 ">
         <Button onClick={() => fetchData()}>Random Recipe</Button>
       </div>
+      <p className="mx-16 mt-8 text-2xl font-extrabold underline text-sky-950">
+        {strMeal}
+      </p>
+      <div className="flex w-full mt-2 gap-36">
+        <img
+          className="object-cover object-center mx-16 mt-4 rounded-lg w-96 h-96"
+          src={strMealThumb}
+          alt="nature"
+        />
 
-      <p className=" text-2xl underline"> {strMeal} </p>
+        <Card className="w-96">
+          <Typography
+            variant="h5"
+            color="blue-gray"
+            className="mt-2 text-center"
+          >
+            Ingredients
+          </Typography>
 
-      <img
-        className="mt-6 w-96 rounded-lg object-cover object-center"
-        src={strMealThumb}
-        alt="nature"
-      />
-
-      <div className=" my-6">
-        <h3 className=" text-4xl font-bold mb-2">Ingredients</h3>
-        {ingredients.map((item, index) => ingList(item, index))}
+          {ingredients.map((item, index) => ingList(item, index))}
+        </Card>
       </div>
-      <p className="underline">Instructions:</p>
-      <p>{strInstructions}</p>
-      <div className="aspect-w-16 aspect-h-9">
+      <p className="mx-16 mt-4 text-2xl font-semibold">Instructions:</p>
+      <p className="mx-16 mt-4 text-lg">{strInstructions}</p>
+
+      <div className="mt-6 aspect-w-16 aspect-h-9">
         <iframe
+          className="rounded-lg"
           title="recipe"
           src={ytUrl}
           frameBorder="0"
@@ -61,8 +90,45 @@ function App() {
           allowFullScreen
         ></iframe>
       </div>
-    </>
+    </div>
   );
 }
 
 export default App;
+
+{
+  /* 
+<p className="text-2xl underline "> {strMeal} </p>
+<Card className="flex-row w-full h-full">
+  <CardHeader
+    shadow={false}
+    floated={false}
+    className="w-2/5 m-0 rounded-r-none shrink-0"
+  >
+    <img
+      className="object-cover object-center w-full h-full mt-6 rounded-lg"
+      src={strMealThumb}
+      alt="nature"
+    />
+  </CardHeader>
+  <CardBody>
+    <Typography variant="h4" color="blue-gray" className="mb-2">
+      Ingredients
+    </Typography>
+    {ingredients.map((item, index) => ingList(item, index))}
+  </CardBody>
+</Card>
+
+<p className="underline">Instructions:</p>
+<p>{strInstructions}</p>
+
+<div className="aspect-w-16 aspect-h-9">
+  <iframe
+    title="recipe"
+    src={ytUrl}
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+  ></iframe>
+</div> */
+}
